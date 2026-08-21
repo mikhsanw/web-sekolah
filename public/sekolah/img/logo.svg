@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Logo sekolah">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#157347"/>
+      <stop offset="1" stop-color="#0f5132"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="58" fill="url(#g)"/>
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#f0b429" stroke-width="3"/>
+  <path d="M60 34 L92 50 L60 66 L28 50 Z" fill="#ffffff"/>
+  <path d="M40 58 L40 74 C40 74 48 82 60 82 C72 82 80 74 80 74 L80 58 L60 68 Z" fill="#f0b429"/>
+  <rect x="88" y="50" width="3" height="20" fill="#ffffff"/>
+</svg>

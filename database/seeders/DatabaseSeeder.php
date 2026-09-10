@@ -112,6 +112,63 @@ class DatabaseSeeder extends Seeder
     ];
 
     /**
+     * Permission role "Editor" — pekerjaan editorial konten website saja.
+     * Tidak boleh menyentuh akun pengguna, data akademik (kelulusan/SPMB),
+     * data referensi (pegawai/fasilitas/ekstrakurikuler), maupun konfigurasi
+     * sistem (role, menu, pengaturan).
+     */
+    private $permissionsEditor = [
+        'konten list',
+        'berita list',
+        'berita create',
+        'berita edit',
+        'berita delete',
+        'halaman list',
+        'halaman create',
+        'halaman edit',
+        'halaman delete',
+        'agenda list',
+        'agenda create',
+        'agenda edit',
+        'agenda delete',
+        'galeri list',
+        'galeri create',
+        'galeri edit',
+        'galeri delete',
+        'prestasi list',
+        'prestasi create',
+        'prestasi edit',
+        'prestasi delete',
+        'profil-sekolah list',
+    ];
+
+    /**
+     * Permission role "Operator Akademik" — mengelola periode kelulusan dan
+     * penerimaan siswa baru (SPMB) saja. Tidak bisa mengubah konten website,
+     * akun pengguna, atau konfigurasi sistem.
+     */
+    private $permissionsOperatorAkademik = [
+        'kelulusan-grup list',
+        'periode-kelulusan list',
+        'periode-kelulusan create',
+        'periode-kelulusan edit',
+        'periode-kelulusan delete',
+        'kelulusan list',
+        'kelulusan create',
+        'kelulusan edit',
+        'kelulusan delete',
+        'spmb-grup list',
+        'periode-spmb list',
+        'periode-spmb create',
+        'periode-spmb edit',
+        'periode-spmb delete',
+        'spmb list',
+        'spmb create',
+        'spmb edit',
+        'spmb delete',
+    ];
+
+    /**
      * Seed the application's database.
      */
     public function run(): void
@@ -123,7 +180,7 @@ class DatabaseSeeder extends Seeder
         // rute, middleware, dan @can di Blade merujuk namanya langsung, jadi
         // harus selalu ada sebagai baris di tabel permissions terlepas dari
         // role mana yang diberi izinnya.
-        foreach ([...$this->permissionsSistem, ...$this->permissionsOperasional] as $permission) {
+        foreach ([...$this->permissionsSistem, ...$this->permissionsOperasional, ...$this->permissionsEditor, ...$this->permissionsOperatorAkademik] as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
@@ -149,6 +206,28 @@ class DatabaseSeeder extends Seeder
             'email' => 'superadmin@example.com',
         ]);
         $user->assignRole($superadminRole);
+
+        // Editor: hanya konten website. Tidak bisa mengelola akun pengguna,
+        // data akademik, data referensi, maupun konfigurasi sistem.
+        $editorRole = Role::firstOrCreate(['name' => 'Editor']);
+        $editorRole->syncPermissions($this->permissionsEditor);
+
+        $editor = User::factory()->create([
+            'name' => 'Example editor user',
+            'email' => 'editor@example.com',
+        ]);
+        $editor->assignRole($editorRole);
+
+        // Operator Akademik: hanya kelulusan & SPMB. Tidak bisa konten,
+        // akun pengguna, maupun konfigurasi sistem.
+        $operatorRole = Role::firstOrCreate(['name' => 'Operator Akademik']);
+        $operatorRole->syncPermissions($this->permissionsOperatorAkademik);
+
+        $operator = User::factory()->create([
+            'name' => 'Example operator user',
+            'email' => 'operator@example.com',
+        ]);
+        $operator->assignRole($operatorRole);
 
         $this->call(MenuSeeder::class);
         $this->call(SekolahSeeder::class);

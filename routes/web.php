@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Route;
 // Halaman publik website sekolah didaftarkan lewat routes/frontend.php
 // (lihat bootstrap/app.php).
 
-Auth::routes();
+// Registrasi publik dimatikan: akun hanya boleh dibuat oleh Super Admin
+// lewat menu Users. Gunakan Auth::routes(['register' => false]).
+Auth::routes(['register' => false]);
 
 Route::middleware('auth')->group(function () {
     Route::middleware(['role:Admin'])->group(function () {});

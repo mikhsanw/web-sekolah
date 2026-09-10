@@ -87,6 +87,29 @@ Nilai dibaca lewat helper `pengaturan('kunci')` dan `pengaturanBerkas('kunci')`
 Default-nya berasal dari `config/sekolah.php`, sehingga website tetap tampil
 sebelum admin mengisi apa pun.
 
+### Role & Hak Akses
+
+Ada dua role bawaan, dengan pemisahan tegas antara **mengonfigurasi aplikasi**
+dan **mengoperasikan kontennya**:
+
+| Role | Lingkup | Tidak bisa |
+|------|---------|------------|
+| **Super Admin** | Semuanya — bypass seluruh pengecekan permission lewat `Gate::before` (`AppServiceProvider`) dan `CheckRoutePermission`. Satu-satunya role yang boleh mengubah Role & Permission, Menu navigasi, Settings (backup), dan Pengaturan Website, serta memberi role Super Admin ke pengguna lain. | — |
+| **Admin** | Operasional harian: seluruh modul konten website sekolah (Halaman, Agenda, Galeri, Prestasi, Pegawai, Ekstrakurikuler, Fasilitas, Kelulusan, SPMB, Berita) dan manajemen akun pengguna biasa. | Menu **Role**, **Menu**, **Settings**, dan **Pengaturan Website** — otomatis tidak tampil di sidebar dan rutenya menolak akses (403) meski URL diketik langsung. Juga tidak bisa memberi role **Super Admin** ke akun mana pun (divalidasi di server, bukan hanya disembunyikan di form). |
+
+Pemisahan ini diatur di `database/seeders/DatabaseSeeder.php` lewat dua daftar
+permission terpisah — `$permissionsSistem` (khusus Super Admin, tidak pernah
+disinkronkan ke role Admin) dan `$permissionsOperasional` (disinkronkan ke
+Admin). Modul baru hasil `php artisan make:crud` otomatis masuk ke daftar
+operasional (lewat marker `// gencrud-permissions`); pindahkan manual ke
+`$permissionsSistem` bila modul barunya bersifat konfigurasi aplikasi, bukan
+konten.
+
+Guna menambah role baru yang lebih sempit (mis. "Panitia SPMB" yang hanya
+boleh menyentuh modul SPMB), buat lewat `Admin → Role` (menu ini sendiri
+hanya terlihat oleh Super Admin) dan centang permission modul yang relevan
+saja — tidak perlu mengubah kode.
+
 ---
 
 ## 4. Alur Kelulusan

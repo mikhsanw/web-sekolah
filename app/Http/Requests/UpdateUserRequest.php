@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUserRequest extends FormRequest
@@ -17,7 +18,7 @@ class UpdateUserRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -25,7 +26,16 @@ class UpdateUserRequest extends FormRequest
             'name' => 'required|string|max:250',
             'email' => 'required|string|email:rfc,dns|max:250|unique:users,email,'.$this->user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'roles' => 'required'
+            'roles' => 'required|array',
+            // Blade menyembunyikan opsi "Super Admin" dari non-Super Admin,
+            // tapi ini bentengnya di server: memberi role Super Admin hanya
+            // boleh dilakukan oleh Super Admin sendiri, tidak peduli permission
+            // "users edit" yang dipegang pengirim request.
+            'roles.*' => ['string', 'exists:roles,name', function ($attribute, $value, $fail) {
+                if ($value === 'Super Admin' && ! $this->user()?->hasRole('Super Admin')) {
+                    $fail('Hanya Super Admin yang dapat memberikan role Super Admin.');
+                }
+            }],
         ];
     }
 }

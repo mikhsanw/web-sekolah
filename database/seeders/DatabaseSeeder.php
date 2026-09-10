@@ -5,42 +5,60 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\MenuSeeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Permission "sistem" — mengubah konfigurasi inti aplikasi: siapa boleh
+     * apa (role & permission), struktur navigasi (menu), serta pengaturan
+     * aplikasi (backup/Google Drive dan identitas website).
+     *
+     * Sengaja TIDAK disinkronkan ke role Admin. Mengubah hal-hal ini bisa
+     * mengunci akses seluruh admin lain atau mengubah perilaku aplikasi
+     * secara global, jadi dibatasi hanya untuk Super Admin (yang mem-bypass
+     * seluruh pengecekan permission lewat Gate::before di AppServiceProvider
+     * dan CheckRoutePermission — lihat kedua berkas itu).
      */
-    private $permissions = [
+    private $permissionsSistem = [
         'roles list',
         'roles create',
         'roles edit',
         'roles delete',
-        'users list',
-        'users create',
-        'users edit',
-        'users delete',
-        'products list',
-        'products create',
-        'products edit',
-        'products delete',
+        'menu list',
+        'menu create',
+        'menu edit',
+        'menu delete',
         'settings list',
         'settings create',
         'settings edit',
         'settings delete',
+        'pengaturan list',
+        'pengaturan create',
+        'pengaturan edit',
+        'pengaturan delete',
+    ];
+
+    /**
+     * Permission "operasional" — pekerjaan sehari-hari mengelola akun
+     * pengguna dan konten website. Disinkronkan ke role Admin.
+     *
+     * Modul baru dari `php artisan make:crud` otomatis masuk ke sini
+     * (marker gencrud-permissions), sehingga secara default berstatus
+     * operasional/Admin kecuali sengaja dipindahkan ke $permissionsSistem.
+     */
+    private $permissionsOperasional = [
+        'users list',
+        'users create',
+        'users edit',
+        'users delete',
         'berita list',
         'berita create',
         'berita edit',
         'berita delete',
         'logs list',
-        'menu list',
-        'menu create',
-        'menu edit',
-        'menu delete',
         // modul website sekolah
         'konten list',
         'profil-sekolah list',
@@ -90,30 +108,41 @@ class DatabaseSeeder extends Seeder
         'spmb create',
         'spmb edit',
         'spmb delete',
-        'pengaturan list',
-        'pengaturan create',
-        'pengaturan edit',
-        'pengaturan delete',
         // gencrud-permissions
     ];
 
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
         // User::factory(10)->create();
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        foreach ($this->permissions as $permission) {
+        // Semua permission dibuat lebih dulu (baik sistem maupun operasional):
+        // rute, middleware, dan @can di Blade merujuk namanya langsung, jadi
+        // harus selalu ada sebagai baris di tabel permissions terlepas dari
+        // role mana yang diberi izinnya.
+        foreach ([...$this->permissionsSistem, ...$this->permissionsOperasional] as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
+
+        // Admin: hanya permission operasional. Tidak bisa mengubah role,
+        // menu navigasi, maupun pengaturan aplikasi/website — itu tugas
+        // Super Admin.
         $role = Role::firstOrCreate(['name' => 'Admin']);
-        $permissions = Permission::pluck('id', 'id')->all();
-        $role->syncPermissions($permissions);
+        $role->syncPermissions($this->permissionsOperasional);
+
         $user = User::factory()->create([
             'name' => 'Test User',
             'email' => 'admin@example.com',
         ]);
         $user->assignRole([$role->id]);
 
+        // Super Admin: tidak perlu permission eksplisit apa pun. Gate::before
+        // (AppServiceProvider) dan CheckRoutePermission sudah meloloskan role
+        // ini dari seluruh pengecekan, termasuk permission yang baru dibuat
+        // lewat make:crud di kemudian hari.
         $superadminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $user = User::factory()->create([
             'name' => 'Example superadmin user',

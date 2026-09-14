@@ -62,27 +62,6 @@
         .login-wrap { position: relative; z-index: 1; }
 
         /* ---------- Sisi kiri (branding) ---------- */
-        .login-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-            padding: .38rem .9rem;
-            border-radius: 999px;
-            background: rgba(255,255,255,.10);
-            border: 1px solid rgba(255,255,255,.20);
-            backdrop-filter: blur(8px);
-            color: #fff;
-            font-size: .78rem;
-            letter-spacing: .12em;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        .login-badge .dot {
-            width: 7px; height: 7px; border-radius: 50%;
-            background: {{ $warnaAksen }};
-            box-shadow: 0 0 0 4px {{ $warnaAksen }}33;
-        }
-
         .login-logo-ring {
             display: inline-flex;
             align-items: center;
@@ -146,6 +125,7 @@
         }
         .login-field .form-control {
             border-left: 0;
+            border-right: 0;
             padding-left: .25rem;
         }
         .login-field .form-control:focus {
@@ -153,11 +133,33 @@
             border-color: #ced4da;
         }
         .login-field:focus-within .input-group-text,
-        .login-field:focus-within .form-control {
+        .login-field:focus-within .form-control,
+        .login-field:focus-within .login-eye {
             border-color: {{ $warnaUtama }};
         }
         .login-field { transition: transform .18s ease; }
         .login-field:focus-within { transform: translateY(-1px); }
+
+        /* Tombol mata: menyatu dengan input, tinggi & border sejajar */
+        .login-field .login-eye {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            padding: 0;
+            margin: 0;
+            background: transparent;
+            border: 1px solid #ced4da;
+            border-left: 0;
+            border-radius: 0 .475rem .475rem 0;
+            color: #6c757d;
+            line-height: 1;
+            cursor: pointer;
+            transition: color .15s ease, background-color .15s ease;
+        }
+        .login-field .login-eye:hover { color: {{ $warnaUtama }}; background: {{ $warnaUtama }}0f; }
+        .login-field .login-eye:focus-visible { outline: 2px solid {{ $warnaUtama }}; outline-offset: -2px; }
+        .login-field .login-eye svg { display: block; flex: 0 0 auto; }
 
         .login-btn {
             background: linear-gradient(100deg, {{ $warnaUtama }}, #17714a);
@@ -218,12 +220,6 @@
                     </span>
                 </a>
                 <!--end::Logo-->
-
-                <!--begin::Badge-->
-                <span class="login-badge mb-5">
-                    <span class="dot"></span> Panel Admin
-                </span>
-                <!--end::Badge-->
 
                 <!--begin::Title-->
                 <h1 class="login-title mb-4">{{ $namaSekolah }}</h1>
@@ -313,10 +309,9 @@
                                 <input id="password" type="password" class="form-control bg-transparent @error('password') is-invalid @enderror"
                                        name="password" placeholder="••••••••" aria-describedby="password-addon"
                                        required autocomplete="current-password">
-                                <button type="button" class="btn btn-icon btn-sm" id="togglePassword"
-                                        aria-label="Tampilkan password" title="Tampilkan password"
-                                        style="border:1px solid #ced4da; border-left:0;">
-                                    <svg id="eyeIcon" width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                <button type="button" class="login-eye" id="togglePassword"
+                                        aria-label="Tampilkan password" aria-pressed="false" title="Tampilkan password">
+                                    <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                                         <path d="M8 3C4.4 3 1.4 5.6.2 8c1.2 2.4 4.2 5 7.8 5s6.6-2.6 7.8-5C14.6 5.6 11.6 3 8 3Zm0 8.2A3.2 3.2 0 1 1 8 4.8a3.2 3.2 0 0 1 0 6.4Zm0-1.6a1.6 1.6 0 1 0 0-3.2 1.6 1.6 0 0 0 0 3.2Z"/>
                                     </svg>
                                 </button>
@@ -385,10 +380,16 @@
             var btn = document.getElementById('togglePassword');
             var input = document.getElementById('password');
             if (!btn || !input) return;
+            var eyeOpen = 'M8 3C4.4 3 1.4 5.6.2 8c1.2 2.4 4.2 5 7.8 5s6.6-2.6 7.8-5C14.6 5.6 11.6 3 8 3Zm0 8.2A3.2 3.2 0 1 1 8 4.8a3.2 3.2 0 0 1 0 6.4Zm0-1.6a1.6 1.6 0 1 0 0-3.2 1.6 1.6 0 0 0 0 3.2Z';
+            var eyeClosed = 'M8 3c-3.6 0-6.6 2.6-7.8 5 .4.8 1 1.6 1.7 2.3l1.2-1.2A4.9 4.9 0 0 1 2.1 8C3.2 6 5.4 4.4 8 4.4c.6 0 1.1.1 1.6.3l1.3-1.3A8.6 8.6 0 0 0 8 3Zm5 2.2-1.3 1.3c.6.5 1.1 1 1.4 1.5-1.1 2-3.3 3.6-5.9 3.6-.5 0-1-.1-1.5-.2L4.4 12.7c1.1.5 2.3.8 3.6.8 3.6 0 6.6-2.6 7.8-5-.4-.8-.9-1.5-1.6-2.2l-1.2-1.1ZM2.6 13.9l1.1-1.1L13 3.4l-1.1-1.1L2.6 13.9Z';
+            var path = btn.querySelector('svg path');
             btn.addEventListener('click', function () {
                 var show = input.type === 'password';
                 input.type = show ? 'text' : 'password';
                 btn.setAttribute('title', show ? 'Sembunyikan password' : 'Tampilkan password');
+                btn.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
+                btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+                if (path) path.setAttribute('d', show ? eyeClosed : eyeOpen);
                 input.focus();
             });
         })();

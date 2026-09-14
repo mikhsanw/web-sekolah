@@ -1,43 +1,43 @@
 <?php
 
+use App\Core\Bootstrap\BootstrapAuth;
+use App\Core\Bootstrap\BootstrapDefault;
+use App\Core\Bootstrap\BootstrapSystem;
+
 return [
 
     'KT_THEME_BOOTSTRAP' => [
-        'default' => \App\Core\Bootstrap\BootstrapDefault::class,
-        'auth' => \App\Core\Bootstrap\BootstrapAuth::class,
-        'system' => \App\Core\Bootstrap\BootstrapSystem::class,
+        'default' => BootstrapDefault::class,
+        'auth' => BootstrapAuth::class,
+        'system' => BootstrapSystem::class,
     ],
 
     'KT_THEME' => 'metronic',
 
-    # Theme layout templates directory
+    // Theme layout templates directory
 
     'KT_THEME_LAYOUT_DIR' => 'layouts/backend',
 
-
-    # Theme Mode
-    # Value: light | dark | system
+    // Theme Mode
+    // Value: light | dark | system
 
     'KT_THEME_MODE_DEFAULT' => 'light',
     'KT_THEME_MODE_SWITCH_ENABLED' => true,
 
-
-    # Theme Direction
-    # Value: ltr | rtl
+    // Theme Direction
+    // Value: ltr | rtl
 
     'KT_THEME_DIRECTION' => 'ltr',
 
-
-    # Keenicons
-    # Value: duotone | outline | bold
+    // Keenicons
+    // Value: duotone | outline | bold
 
     'KT_THEME_ICONS' => 'duotone',
 
-
-    # Theme Assets
+    // Theme Assets
 
     'KT_THEME_ASSETS' => [
-        'favicon' => 'front/dist/images/logo.png',
+        'favicon' => 'sekolah/img/logo.svg',
         'fonts' => [
             'https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700',
         ],
@@ -54,8 +54,7 @@ return [
         ],
     ],
 
-
-    # Theme Vendors
+    // Theme Vendors
 
     'KT_THEME_VENDORS' => [
         'datatables' => [

@@ -19,7 +19,7 @@
     <meta property="og:url" content="{{ url('/') }}" />
     <meta property="og:site_name" content="{{ config('master.app.profile.name') }}" />
     <link rel="canonical" href="{{ url('/') }}" />
-    <link rel="shortcut icon" href="{{ asset('front/dist/images/logo.png') }}" />
+    <link rel="shortcut icon" href="{{ pengaturanBerkas('favicon') ?? asset(config('master.app.web.template').'/img/logo.svg') }}" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->

@@ -1,9 +1,23 @@
 <x-auth-layout>
+@php
+    $warnaUtama = pengaturan('warna_utama', config('sekolah.tampilan.warna_utama'));
+    $warnaAksen = pengaturan('warna_aksen', config('sekolah.tampilan.warna_aksen'));
+    $namaSekolah = pengaturan('nama_sekolah', config('master.app.profile.name'));
+    $alamatSekolah = pengaturan('alamat', config('sekolah.identitas.alamat'));
+    $logoSekolah = pengaturanBerkas('logo') ?? asset(config('master.app.web.template').'/img/logo.svg');
+@endphp
 <!--begin::Root-->
 <div class="d-flex flex-column flex-root" id="kt_app_root">
-    <!--begin::Page bg image-->
-    <style>body { background-image: url('assets/media/auth/bg4.jpg'); } [data-bs-theme="dark"] body { background-image: url('assets/media/auth/bg4-dark.jpg') }</style>
-    <!--end::Page bg image-->
+    <!--begin::Page bg-->
+    <style>
+        body {
+            background:
+                radial-gradient(900px circle at 15% 10%, {{ $warnaAksen }}33, transparent 55%),
+                linear-gradient(160deg, {{ $warnaUtama }} 0%, #0b2118 55%, #06120c 100%);
+            background-attachment: fixed;
+        }
+    </style>
+    <!--end::Page bg-->
     <!--begin::Authentication - Sign-in -->
     <div class="d-flex flex-column flex-column-fluid flex-lg-row">
         <!--begin::Aside-->
@@ -11,13 +25,20 @@
             <!--begin::Aside-->
             <div class="d-flex flex-center flex-lg-start flex-column">
                 <!--begin::Logo-->
-                <a href="{{url('/')}}" class="mb-7">
-                    <img alt="Logo" width="230" src="{{asset('assets/media/logos/AMI_White.png')}}" />
+                <a href="{{ url('/') }}" class="mb-7 d-inline-flex">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white p-3 shadow-sm">
+                        <img alt="Logo {{ $namaSekolah }}" width="84" height="84" style="object-fit: contain;" src="{{ $logoSekolah }}" />
+                    </span>
                 </a>
                 <!--end::Logo-->
                 <!--begin::Title-->
-                <h2 class="text-white fw-normal m-0">Selamat Datang di Aplikasi {{ config('master.app.profile.name') }} </h2>
+                <h2 class="text-white fw-bold m-0">{{ $namaSekolah }}</h2>
                 <!--end::Title-->
+                @if ($alamatSekolah && $alamatSekolah !== '-')
+                    <p class="text-white text-opacity-75 fs-6 mt-2 mb-0" style="max-width: 420px;">{{ $alamatSekolah }}</p>
+                @endif
+                <p class="text-white text-opacity-50 fs-7 mt-6 mb-0 text-uppercase" style="letter-spacing: .1em;">Panel Admin</p>
+                <!--end::Subtitle-->
             </div>
             <!--begin::Aside-->
         </div>
@@ -35,10 +56,10 @@
                         <!--begin::Heading-->
                         <div class="text-center mb-11">
                             <!--begin::Title-->
-                            <h1 class="text-gray-900 fw-bolder mb-3">{{ __('Sign In') }}</h1>
+                            <h1 class="text-gray-900 fw-bolder mb-3">Masuk</h1>
                             <!--end::Title-->
                             <!--begin::Subtitle-->
-                            <div class="text-gray-500 fw-semibold fs-6">{{config('master.app.profile.name')}}</div>
+                            <div class="text-gray-500 fw-semibold fs-6">{{ $namaSekolah }}</div>
                             <!--end::Subtitle=-->
                         </div>
                         <!--begin::Heading-->
@@ -67,117 +88,33 @@
                             <!--end::Password-->
                         </div>
                         <!--end::Input group=-->
-                        <!--begin::Wrapper-->
-                        <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
-                            <div></div>
-                            <!--begin::Link-->
-                            {{-- <a href="authentication/layouts/creative/reset-password.html" class="link-primary">Forgot Password ?</a> --}}
-                            <!--end::Link-->
-                        </div>
-                        <!--end::Wrapper-->
                         <!--begin::Submit button-->
-                        <div class="d-grid mb-10">
+                        <div class="d-grid mb-4 mt-8">
                             <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">
                                 <!--begin::Indicator label-->
-                                <span class="indicator-label">{{ __('Sign In') }}</span>
+                                <span class="indicator-label">Masuk</span>
                                 <!--end::Indicator label-->
                                 <!--begin::Indicator progress-->
-                                <span class="indicator-progress">Please wait... 
+                                <span class="indicator-progress">Mohon tunggu...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                 <!--end::Indicator progress-->
                             </button>
-                            
-                            @if (Route::has('password.request'))
-                                <a class="btn link-primary" href="{{ route('password.request') }}">
-                                    {{ __('Forgot Your Password?') }}
-                                </a>
-                            @endif
                         </div>
                         <!--end::Submit button-->
-                        <!--begin::Sign up-->
-                        @if (Route::has('register'))
-                            <div class="text-gray-500 text-center fw-semibold fs-6">Not a Member yet? 
-                            <a href="{{url('register')}}" class="link-primary">Sign up</a></div>
+                        @if (Route::has('password.request'))
+                            <div class="text-center">
+                                <a class="link-primary fs-6" href="{{ route('password.request') }}">
+                                    Lupa Password?
+                                </a>
+                            </div>
                         @endif
-                        <!--end::Sign up-->
                     </form>
                     <!--end::Form-->
                 </div>
                 <!--end::Wrapper-->
                 <!--begin::Footer-->
-                <div class="d-flex flex-stack px-lg-10">
-                    <!--begin::Languages-->
-                    {{-- <div class="me-0">
-                        <!--begin::Toggle-->
-                        <button class="btn btn-flex btn-link btn-color-gray-700 btn-active-color-primary rotate fs-base" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" data-kt-menu-offset="0px, 0px">
-                            <img data-kt-element="current-lang-flag" class="w-20px h-20px rounded me-3" src="{{asset('assets/media/flags/united-states.svg')}}" alt="" />
-                            <span data-kt-element="current-lang-name" class="me-1">English</span>
-                            <i class="ki-duotone ki-down fs-5 text-muted rotate-180 m-0"></i>
-                        </button>
-                        <!--end::Toggle-->
-                        <!--begin::Menu-->
-                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px py-4 fs-7" data-kt-menu="true" id="kt_auth_lang_menu">
-                            <!--begin::Menu item-->
-                            <div class="menu-item px-3">
-                                <a href="#" class="menu-link d-flex px-5" data-kt-lang="English">
-                                    <span class="symbol symbol-20px me-4">
-                                        <img data-kt-element="lang-flag" class="rounded-1" src="{{asset('assets/media/flags/united-states.svg')}}" alt="" />
-                                    </span>
-                                    <span data-kt-element="lang-name">English</span>
-                                </a>
-                            </div>
-                            <!--end::Menu item-->
-                            <!--begin::Menu item-->
-                            <div class="menu-item px-3">
-                                <a href="#" class="menu-link d-flex px-5" data-kt-lang="Spanish">
-                                    <span class="symbol symbol-20px me-4">
-                                        <img data-kt-element="lang-flag" class="rounded-1" src="{{asset('assets/media/flags/spain.svg')}}" alt="" />
-                                    </span>
-                                    <span data-kt-element="lang-name">Spanish</span>
-                                </a>
-                            </div>
-                            <!--end::Menu item-->
-                            <!--begin::Menu item-->
-                            <div class="menu-item px-3">
-                                <a href="#" class="menu-link d-flex px-5" data-kt-lang="German">
-                                    <span class="symbol symbol-20px me-4">
-                                        <img data-kt-element="lang-flag" class="rounded-1" src="{{asset('assets/media/flags/germany.svg')}}" alt="" />
-                                    </span>
-                                    <span data-kt-element="lang-name">German</span>
-                                </a>
-                            </div>
-                            <!--end::Menu item-->
-                            <!--begin::Menu item-->
-                            <div class="menu-item px-3">
-                                <a href="#" class="menu-link d-flex px-5" data-kt-lang="Japanese">
-                                    <span class="symbol symbol-20px me-4">
-                                        <img data-kt-element="lang-flag" class="rounded-1" src="{{asset('assets/media/flags/japan.svg')}}" alt="" />
-                                    </span>
-                                    <span data-kt-element="lang-name">Japanese</span>
-                                </a>
-                            </div>
-                            <!--end::Menu item-->
-                            <!--begin::Menu item-->
-                            <div class="menu-item px-3">
-                                <a href="#" class="menu-link d-flex px-5" data-kt-lang="French">
-                                    <span class="symbol symbol-20px me-4">
-                                        <img data-kt-element="lang-flag" class="rounded-1" src="{{asset('assets/media/flags/france.svg')}}" alt="" />
-                                    </span>
-                                    <span data-kt-element="lang-name">French</span>
-                                </a>
-                            </div>
-                            <!--end::Menu item-->
-                        </div>
-                        <!--end::Menu-->
-                    </div> --}}
-                    <!--end::Languages-->
-                    <!--begin::Links-->
-                    {{-- <div class="d-flex fw-semibold text-primary fs-base gap-5">
-                        <a href="pages/team.html" target="_blank">Terms</a>
-                        <a href="pages/pricing/column.html" target="_blank">Plans</a>
-                        <a href="pages/contact.html" target="_blank">Contact Us</a>
-                    </div> --}}
-                    <!--end::Links-->
+                <div class="text-center text-gray-500 fs-8">
+                    &copy; {{ date('Y') }} {{ $namaSekolah }}
                 </div>
                 <!--end::Footer-->
             </div>

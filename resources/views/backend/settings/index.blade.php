@@ -11,7 +11,7 @@
                 <div class="card mb-5 shadow-sm">
                     <div class="card-body">
                         <h3 class="fw-bold text-gray-800 mb-0">⚙️ Pengaturan Sistem Aplikasi</h3>
-                        <small class="text-muted">Kelola konfigurasi untuk seluruh fungsi AMI POLBENG</small>
+                        <small class="text-muted">Kelola konfigurasi backup untuk {{ pengaturan('nama_sekolah', config('master.app.profile.name')) }}</small>
                     </div>
                 </div>
 

@@ -12,7 +12,7 @@
             <!--begin::Mobile logo-->
             <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
                 <a href="{{url('/admin/home')}}" class="d-lg-none">
-                    <img alt="Logo" src="{{asset('assets/media/logos/AMI.png')}}" class="h-30px" />
+                    <img alt="Logo" src="{{ pengaturanBerkas('logo') ?? asset(config('master.app.web.template').'/img/logo.svg') }}" class="h-30px" />
                 </a>
             </div>
             <!--end::Mobile logo-->

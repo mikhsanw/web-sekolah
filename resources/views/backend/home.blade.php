@@ -15,7 +15,7 @@
             <div class="m-0">
                 <!--begin::Title-->
                 <div class="position-relative fs-2x z-index-2 fw-bold text-white mb-7">
-                    Welcome to AMI POLBENG</div>
+                    Selamat datang di Panel Admin {{ pengaturan('nama_sekolah', config('master.app.profile.name')) }}</div>
                 <!--end::Title-->
 
             </div>

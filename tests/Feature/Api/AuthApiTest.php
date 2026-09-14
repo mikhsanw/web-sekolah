@@ -2,39 +2,25 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
-it('registers a user with detail payload and roles', function () {
-    $adminRole = Role::create(['name' => 'Admin']);
-
-    $response = $this->postJson('/api/register', [
-        'name' => 'API User',
-        'email' => 'api-user@example.com',
+it('menolak registrasi publik lewat API karena route sudah dimatikan', function () {
+    // Akun hanya boleh dibuat Super Admin lewat panel admin (lihat
+    // routes/api.php) — pastikan endpoint publiknya tetap tidak ada.
+    $this->postJson('/api/register', [
+        'name' => 'Percobaan Registrasi',
+        'email' => 'percobaan-registrasi@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
-        'hp' => '08123456789',
-        'roles' => [$adminRole->id],
-    ]);
+    ])->assertNotFound();
 
-    $response
-        ->assertCreated()
-        ->assertJsonPath('status', 'success')
-        ->assertJsonPath('data.user.email', 'api-user@example.com')
-        ->assertJsonStructure([
-            'status',
-            'message',
-            'data' => [
-                'user',
-                'token',
-            ],
-        ]);
+    expect(User::where('email', 'percobaan-registrasi@example.com')->exists())->toBeFalse();
+});
 
-    $user = User::where('email', 'api-user@example.com')->firstOrFail();
-
-    expect($user->detail)->toBe(['hp' => '08123456789']);
-    expect($user->hasRole('Admin'))->toBeTrue();
+it('menolak registrasi publik lewat web karena route sudah dimatikan', function () {
+    // Lihat routes/web.php — Auth::routes(['register' => false]).
+    $this->get('/register')->assertNotFound();
 });
 
 it('logs in an existing user and returns a token', function () {

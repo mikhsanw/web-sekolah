@@ -76,9 +76,8 @@ hr { border: 0; border-top: 1px solid var(--garis); margin: 1.5rem 0; }
     gap: 18px; padding-top: 18px; padding-bottom: 18px; text-align: center;
 }
 .masthead__logo {
-    width: 76px; height: 76px; border-radius: 50%; flex: none;
-    object-fit: contain; background: var(--putih); padding: 4px;
-    border: 2px solid var(--garis);
+    width: 76px; height: 76px; flex: none;
+    object-fit: contain; background: transparent; padding: 0; border: 0;
 }
 .masthead__teks { text-align: left; }
 .masthead__nama { font-size: 1.65rem; font-weight: 800; color: var(--warna-utama); letter-spacing: .2px; margin: 0; }
@@ -360,7 +359,7 @@ textarea.form-kontrol { min-height: 96px; resize: vertical; }
 .footer__grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 26px; padding-bottom: 26px; }
 .footer h4 { color: #fff; font-size: 1rem; margin-bottom: 12px; }
 .footer__identitas { display: flex; gap: 14px; }
-.footer__logo { width: 64px; height: 64px; border-radius: 50%; flex: none; background: #fff; padding: 4px; object-fit: contain; }
+.footer__logo { width: 64px; height: 64px; flex: none; background: transparent; padding: 0; border: 0; object-fit: contain; }
 .footer__nama { color: #fff; font-weight: 700; font-size: 1.05rem; }
 .footer__daftar { list-style: none; margin: 0; padding: 0; font-size: .9rem; }
 .footer__daftar li { padding: 3px 0; }

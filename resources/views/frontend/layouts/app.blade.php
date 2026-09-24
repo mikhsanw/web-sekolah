@@ -22,7 +22,7 @@
         <meta property="og:image" content="{{ $identitas['logo'] }}">
     @endif
     <link rel="icon" href="{{ pengaturanBerkas('favicon') ?? asset($aset.'/img/logo.svg') }}">
-    <link rel="stylesheet" href="{{ asset($aset.'/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset($aset.'/css/style.css') }}?v={{ filemtime(public_path($aset.'/css/style.css')) }}">
     <style>
         :root {
             --warna-utama: {{ $identitas['warna_utama'] ?? config('sekolah.tampilan.warna_utama') }};
